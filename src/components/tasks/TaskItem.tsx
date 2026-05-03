@@ -63,8 +63,8 @@ export const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }: Props) => {
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography
             variant="subtitle1"
-            fontWeight={600}
             sx={{
+              fontWeight: 600,
               textDecoration: isCompleted ? 'line-through' : 'none',
               color: isCompleted ? 'text.secondary' : 'text.primary',
               wordBreak: 'break-word',

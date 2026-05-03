@@ -92,7 +92,7 @@ export const TaskPage = () => {
         }}
       >
         <Box>
-          <Typography variant="h4" fontWeight={700} component="h1">
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
             📋 Mis Tareas
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -176,7 +176,7 @@ export const TaskPage = () => {
 
       {/* Diálogo de confirmación de eliminación */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
-        <DialogTitle fontWeight={700}>🗑️ Eliminar tarea</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700 }}>🗑️ Eliminar tarea</DialogTitle>
         <DialogContent>
           <Typography>
             ¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.
