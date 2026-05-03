@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Container,
   Paper,
   TextField,
   Typography,
@@ -13,11 +12,11 @@ import type { ActionState } from '../../interfaces';
 import { createInitialState, handleZodErros } from '../../helpers';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAlert, useAuth, useAxios } from '../../hooks';
-
-//const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { TaskAlt as TaskIcon, Lock as LockIcon } from '@mui/icons-material';
 
 export type LoginActionState = ActionState<LoginFormValues>;
 const initialState = createInitialState<LoginFormValues>();
+
 export const LoginPage = () => {
   const { showAlert } = useAlert();
   const { login } = useAuth();
@@ -34,101 +33,170 @@ export const LoginPage = () => {
     };
     try {
       schemaLogin.parse(rawData);
-      //await delay(5000);
       const response = await axios.post('login', rawData);
       if (!response?.data?.token) throw new Error('Token no existe');
       login(response.data.token, { username: rawData.username });
-      showAlert('Bienvenido', 'success');
-      navigate('/perfil');
+      showAlert('¡Bienvenido! 👋', 'success');
+      navigate('/tasks');
     } catch (error) {
       const err = handleZodErros<LoginFormValues>(error, rawData);
-      console.log('error', err);
       showAlert(err.message, 'error');
       return err;
     }
   };
 
-  const [state, submitAction, isPending] = useActionState(
-    loginApi,
-    initialState,
-  );
+  const [state, submitAction, isPending] = useActionState(loginApi, initialState);
 
   return (
-    <Container
-      maxWidth={false}
+    <Box
       sx={{
-        backgroundColor: '#242424',
-        width: '100%',
+        minHeight: '100vh',
         display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
+        background: 'radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.1) 0%, transparent 60%), #0f0f1a',
+        px: 2,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Decoración de fondo */}
       <Box
         sx={{
-          maxWidth: 'sm',
-          display: 'flex',
-          flexDirection: 'column', // para que los hijos se apilen verticalmente
-          justifyContent: 'center', // centra verticalmente el contenido del box
-          height: '100vh',
-          textAlign: 'center', // para centrar texto dentro de hijos si quieres
+          position: 'absolute',
+          width: 400,
+          height: 400,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)',
+          top: -100,
+          left: -100,
+          pointerEvents: 'none',
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          width: 300,
+          height: 300,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)',
+          bottom: -50,
+          right: -50,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <Paper
+        elevation={0}
+        sx={{
+          width: '100%',
+          maxWidth: 420,
+          p: 4,
+          borderRadius: 4,
+          background: 'linear-gradient(135deg, #1e1e3a 0%, #16213e 100%)',
+          border: '1px solid rgba(124,58,237,0.25)',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.1)',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
-        <Paper elevation={3} sx={{ padding: 4 }}>
-          <Typography component={'h1'} variant="h4" gutterBottom>
-            LOGIN
-          </Typography>
-
-          <Typography variant="body2" sx={{ mb: 3 }}>
-            Proyecto Diplomado para REACT
-          </Typography>
-
-          <Box component={'form'} action={submitAction} sx={{ width: '100%' }}>
-            <TextField
-              label="Username"
-              name="username"
-              type="text"
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              required
-              disabled={isPending}
-              defaultValue={state?.formData?.username}
-              error={!!state?.errors.username}
-              helperText={state?.errors.username}
-            />
-
-            <TextField
-              label="Password"
-              name="password"
-              type="password"
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              required
-              disabled={isPending}
-              defaultValue={state?.formData?.password}
-              error={!!state?.errors.password}
-              helperText={state?.errors.password}
-            />
-
-            <Button
-              type="submit"
-              disabled={isPending}
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, height: 48 }}
-              startIcon={
-                isPending ? (
-                  <CircularProgress size={20} color="inherit" />
-                ) : null
-              }
-            >
-              {isPending ? 'Ingresando...' : 'Ingresar'}
-            </Button>
-            <Link to={'/user'}>Registrar nuevo usuario</Link>
+        {/* Logo */}
+        <Box sx={{ textAlign: 'center', mb: 3 }}>
+          <Box
+            sx={{
+              width: 64,
+              height: 64,
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #7c3aed, #06b6d4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mx: 'auto',
+              mb: 2,
+              boxShadow: '0 8px 25px rgba(124,58,237,0.4)',
+            }}
+          >
+            <TaskIcon sx={{ color: 'white', fontSize: 32 }} />
           </Box>
-        </Paper>
-      </Box>
-    </Container>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 800,
+              background: 'linear-gradient(90deg, #a78bfa, #67e8f9)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: '-0.3px',
+            }}
+          >
+            TaskDone
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+            Inicia sesión para continuar
+          </Typography>
+        </Box>
+
+        <Box component="form" action={submitAction}>
+          <TextField
+            label="Usuario"
+            name="username"
+            type="text"
+            fullWidth
+            margin="normal"
+            required
+            disabled={isPending}
+            defaultValue={state?.formData?.username}
+            error={!!state?.errors.username}
+            helperText={state?.errors.username}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <Box sx={{ mr: 1, color: 'text.secondary', display: 'flex' }}>
+                    <LockIcon sx={{ fontSize: 18 }} />
+                  </Box>
+                ),
+              },
+            }}
+          />
+
+          <TextField
+            label="Contraseña"
+            name="password"
+            type="password"
+            fullWidth
+            margin="normal"
+            required
+            disabled={isPending}
+            defaultValue={state?.formData?.password}
+            error={!!state?.errors.password}
+            helperText={state?.errors.password}
+          />
+
+          <Button
+            type="submit"
+            disabled={isPending}
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 1.5, height: 50, fontSize: '0.95rem' }}
+            startIcon={isPending ? <CircularProgress size={18} color="inherit" /> : null}
+          >
+            {isPending ? 'Ingresando...' : 'Iniciar sesión'}
+          </Button>
+
+          <Typography variant="body2" sx={{ textAlign: 'center', color: 'text.secondary' }}>
+            ¿No tienes cuenta?{' '}
+            <Link
+              to="/user"
+              style={{
+                color: '#a78bfa',
+                textDecoration: 'none',
+                fontWeight: 600,
+              }}
+            >
+              Regístrate aquí
+            </Link>
+          </Typography>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
