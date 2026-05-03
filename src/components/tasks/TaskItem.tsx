@@ -1,19 +1,10 @@
 import {
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  IconButton,
-  Tooltip,
-  Typography,
+  Box, Card, CardContent, Chip, IconButton, Tooltip, Typography,
 } from '@mui/material';
 import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  CheckCircle as CheckIcon,
-  RadioButtonUnchecked as PendingIcon,
-  TaskAlt as CompletedIcon,
-  PendingActions as PendingBadgeIcon,
+  Delete as DeleteIcon, Edit as EditIcon,
+  CheckCircle as CheckIcon, RadioButtonUnchecked as UncheckedIcon,
+  TaskAlt as CompletedIcon, Schedule as PendingBadgeIcon,
 } from '@mui/icons-material';
 import type { Task } from '../../models/task.model';
 
@@ -31,56 +22,49 @@ export const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }: Props) => {
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
-        borderLeft: 4,
+        borderRadius: 2.5,
+        borderLeft: '3px solid',
         borderColor: isCompleted ? 'success.main' : 'primary.main',
-        opacity: isCompleted ? 0.88 : 1,
-        transition: 'all 0.25s ease',
+        transition: 'all 0.2s ease',
         '&:hover': {
-          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-          transform: 'translateY(-2px)',
+          boxShadow: '0 6px 24px rgba(0,0,0,0.35)',
+          transform: 'translateY(-1px)',
+          borderColor: isCompleted ? 'success.light' : 'primary.light',
         },
       }}
     >
       <CardContent
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          py: '14px !important',
-          px: 2,
-        }}
+        sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: '12px !important', px: 2 }}
       >
-        {/* Toggle de estado */}
+        {/* Toggle estado */}
         <Tooltip title={isCompleted ? 'Marcar como pendiente' : 'Marcar como finalizada'}>
           <IconButton
             onClick={() => onToggleStatus(task.id, task.done)}
             size="small"
             sx={{
-              color: isCompleted ? 'success.main' : 'text.secondary',
+              color: isCompleted ? 'success.main' : 'text.disabled',
               '&:hover': {
                 color: isCompleted ? 'warning.main' : 'success.main',
-                bgcolor: isCompleted
-                  ? 'rgba(245,158,11,0.08)'
-                  : 'rgba(16,185,129,0.08)',
+                bgcolor: isCompleted ? 'rgba(100,116,139,0.1)' : 'rgba(16,185,129,0.1)',
               },
-              transition: 'color 0.2s, background 0.2s',
+              transition: 'all 0.18s',
             }}
           >
-            {isCompleted ? <CheckIcon /> : <PendingIcon />}
+            {isCompleted ? <CheckIcon /> : <UncheckedIcon />}
           </IconButton>
         </Tooltip>
 
-        {/* Nombre */}
+        {/* Contenido */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography
             variant="subtitle1"
             sx={{
               fontWeight: 600,
+              fontSize: '0.9rem',
               textDecoration: isCompleted ? 'line-through' : 'none',
               color: isCompleted ? 'text.secondary' : 'text.primary',
               wordBreak: 'break-word',
-              transition: 'color 0.2s',
+              transition: 'color 0.18s',
             }}
           >
             {task.name}
@@ -88,44 +72,36 @@ export const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }: Props) => {
 
           <Chip
             icon={
-              isCompleted ? (
-                <CompletedIcon sx={{ fontSize: '14px !important' }} />
-              ) : (
-                <PendingBadgeIcon sx={{ fontSize: '14px !important' }} />
-              )
+              isCompleted
+                ? <CompletedIcon sx={{ fontSize: '13px !important' }} />
+                : <PendingBadgeIcon sx={{ fontSize: '13px !important' }} />
             }
             label={isCompleted ? 'Finalizada' : 'Pendiente'}
             size="small"
             color={isCompleted ? 'success' : 'warning'}
             variant="outlined"
-            sx={{ mt: 0.6, fontWeight: 600, fontSize: '0.7rem', height: 22 }}
+            sx={{ mt: 0.5, fontWeight: 600, fontSize: '0.68rem', height: 20 }}
           />
         </Box>
 
         {/* Acciones */}
-        <Box sx={{ display: 'flex', flexShrink: 0, gap: 0.5 }}>
-          <Tooltip title="Editar tarea">
+        <Box sx={{ display: 'flex', gap: 0.3, flexShrink: 0 }}>
+          <Tooltip title="Editar">
             <IconButton
               onClick={() => onEdit(task)}
               size="small"
-              sx={{
-                color: 'primary.light',
-                '&:hover': { bgcolor: 'rgba(124,58,237,0.12)' },
-              }}
+              sx={{ color: 'primary.light', '&:hover': { bgcolor: 'rgba(37,99,235,0.1)' } }}
             >
-              <EditIcon fontSize="small" />
+              <EditIcon sx={{ fontSize: 17 }} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Eliminar tarea">
+          <Tooltip title="Eliminar">
             <IconButton
               onClick={() => onDelete(task.id)}
               size="small"
-              sx={{
-                color: 'error.main',
-                '&:hover': { bgcolor: 'rgba(239,68,68,0.1)' },
-              }}
+              sx={{ color: 'error.main', '&:hover': { bgcolor: 'rgba(239,68,68,0.1)' } }}
             >
-              <DeleteIcon fontSize="small" />
+              <DeleteIcon sx={{ fontSize: 17 }} />
             </IconButton>
           </Tooltip>
         </Box>

@@ -1,5 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* ============================================
+   SISTEMA DE DISEÑO — PALETA AZUL SaaS
+   ============================================ */
+:root {
+  /* Colores primarios */
+  --color-primary:        #2563EB;
+  --color-primary-light:  #3B82F6;
+  --color-primary-dark:   #1D4ED8;
+  --color-secondary:      #06B6D4;
+  --color-secondary-light:#22D3EE;
+
+  /* Fondos */
+  --bg-base:    #0F172A;
+  --bg-card:    #1E293B;
+  --bg-card-alt:#162032;
+  --bg-hover:   rgba(37, 99, 235, 0.07);
+
+  /* Bordes */
+  --border-subtle:  rgba(51, 65, 85, 0.8);
+  --border-primary: rgba(37, 99, 235, 0.35);
+  --border-glow:    rgba(37, 99, 235, 0.5);
+
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, #2563EB, #06B6D4);
+  --gradient-card:    linear-gradient(135deg, #1E293B 0%, #162032 100%);
+  --gradient-sidebar: linear-gradient(180deg, #0F172A 0%, #0D1829 100%);
+
+  /* Estados */
+  --color-success: #10B981;
+  --color-warning: #64748B;   /* neutro azul-gris para pendiente */
+  --color-error:   #EF4444;
+
+  /* Texto */
+  --text-primary:   #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-muted:     #64748B;
+
+  /* Sombras */
+  --shadow-card:   0 4px 24px rgba(0, 0, 0, 0.35);
+  --shadow-button: 0 4px 14px rgba(37, 99, 235, 0.45);
+  --shadow-glow:   0 0 30px rgba(37, 99, 235, 0.15);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,58 +51,28 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #0f0f1a;
-  color: #e2e8f0;
+  background: var(--bg-base);
+  color: var(--text-primary);
   min-height: 100vh;
 }
 
-/* Animación de entrada para tarjetas */
+/* ---- Animaciones ---- */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
 
 .task-card-enter {
-  animation: fadeInUp 0.3s ease forwards;
+  animation: fadeInUp 0.28s ease forwards;
 }
 
-.slide-in {
-  animation: slideInLeft 0.4s ease forwards;
-}
-
-/* Scrollbar personalizada */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #1a1a2e;
-}
-::-webkit-scrollbar-thumb {
-  background: #6c63ff;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #8b5cf6;
-}
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-light); }

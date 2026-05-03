@@ -13,37 +13,40 @@ export const Header = ({ username, menuOptions, logout }: Props) => {
   const location = useLocation();
 
   const getPageTitle = () => {
-    const currentOption = menuOptions.find((option) => option.path === location.pathname);
+    const currentOption = menuOptions.find((o) => o.path === location.pathname);
     return currentOption?.text || 'TaskDone';
   };
 
   return (
     <AppBar position="fixed" elevation={0}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', px: { xs: 2, md: 3 } }}>
+
         {/* Logo + título */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box
             sx={{
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               borderRadius: 2,
-              background: 'linear-gradient(135deg, #7c3aed, #06b6d4)',
+              background: 'linear-gradient(135deg, #2563EB, #06B6D4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(124,58,237,0.4)',
+              boxShadow: '0 4px 12px rgba(37,99,235,0.45)',
+              flexShrink: 0,
             }}
           >
-            <TaskIcon sx={{ color: 'white', fontSize: 20 }} />
+            <TaskIcon sx={{ color: 'white', fontSize: 18 }} />
           </Box>
           <Typography
             variant="h6"
             sx={{
-              background: 'linear-gradient(90deg, #a78bfa, #67e8f9)',
+              fontWeight: 700,
+              fontSize: '1rem',
+              background: 'linear-gradient(90deg, #3B82F6, #22D3EE)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              fontWeight: 700,
-              letterSpacing: '-0.3px',
+              letterSpacing: '-0.2px',
             }}
           >
             {getPageTitle()}
@@ -51,32 +54,40 @@ export const Header = ({ username, menuOptions, logout }: Props) => {
         </Box>
 
         {/* Usuario + salir */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Chip
             avatar={
-              <Avatar sx={{ bgcolor: 'primary.main', width: 26, height: 26, fontSize: 12 }}>
+              <Avatar
+                sx={{
+                  background: 'linear-gradient(135deg, #2563EB, #06B6D4)',
+                  width: 24,
+                  height: 24,
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}
+              >
                 {username?.charAt(0).toUpperCase() || 'U'}
               </Avatar>
             }
             label={username || 'Usuario'}
             variant="outlined"
             sx={{
-              borderColor: 'rgba(167,139,250,0.3)',
+              borderColor: 'rgba(37,99,235,0.3)',
               color: 'text.primary',
               fontWeight: 500,
               fontSize: '0.82rem',
+              height: 32,
             }}
           />
           <Button
-            color="inherit"
             onClick={logout}
-            startIcon={<LogoutIcon sx={{ fontSize: 16 }} />}
+            startIcon={<LogoutIcon sx={{ fontSize: '16px !important' }} />}
             size="small"
             sx={{
               color: 'text.secondary',
+              fontWeight: 500,
+              fontSize: '0.82rem',
               '&:hover': { color: 'error.main', bgcolor: 'rgba(239,68,68,0.08)' },
-              borderRadius: 2,
-              fontSize: '0.8rem',
             }}
           >
             Salir

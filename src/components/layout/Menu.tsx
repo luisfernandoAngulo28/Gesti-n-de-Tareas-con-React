@@ -1,24 +1,15 @@
 import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Box,
-  Typography,
+  Drawer, List, ListItem, ListItemButton,
+  ListItemIcon, ListItemText, Toolbar, Box, Typography,
 } from '@mui/material';
 import { Checklist as ChecklistIcon } from '@mui/icons-material';
 import type { MenuType } from './types';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-interface Props {
-  menuOptions: MenuType[];
-}
+interface Props { menuOptions: MenuType[] }
 
 export const Menu = ({ menuOptions }: Props) => {
-  const drawerWidth = 240;
+  const drawerWidth = 232;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,31 +19,28 @@ export const Menu = ({ menuOptions }: Props) => {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-        },
+        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         zIndex: 1,
       }}
     >
       <Toolbar />
 
-      <Box sx={{ px: 2, pt: 2, pb: 1 }}>
+      <Box sx={{ px: 2, pt: 2.5, pb: 1 }}>
         <Typography
           variant="caption"
           sx={{
-            color: 'text.secondary',
+            color: 'text.disabled',
             fontWeight: 700,
-            letterSpacing: '0.1em',
+            letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            fontSize: '0.65rem',
+            fontSize: '0.62rem',
           }}
         >
-          Navegación
+          Menú principal
         </Typography>
       </Box>
 
-      <List sx={{ px: 1.5 }}>
+      <List sx={{ px: 1.5, flex: 1 }}>
         {menuOptions.map((option) => {
           const isActive = location.pathname === option.path;
           return (
@@ -61,37 +49,24 @@ export const Menu = ({ menuOptions }: Props) => {
                 onClick={() => navigate(option.path)}
                 selected={isActive}
                 sx={{
-                  borderRadius: 2.5,
-                  py: 1.2,
+                  borderRadius: 2,
+                  py: 1.1,
                   position: 'relative',
-                  overflow: 'hidden',
-                  '&.Mui-selected': {
-                    background: 'linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.1))',
-                    border: '1px solid rgba(124,58,237,0.3)',
-                    '&:hover': {
-                      background: 'linear-gradient(135deg, rgba(124,58,237,0.35), rgba(6,182,212,0.15))',
-                    },
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      left: 0,
-                      top: '20%',
-                      height: '60%',
-                      width: 3,
-                      borderRadius: '0 3px 3px 0',
-                      background: 'linear-gradient(180deg, #7c3aed, #06b6d4)',
-                    },
-                  },
-                  '&:hover': {
-                    bgcolor: 'rgba(255,255,255,0.04)',
+                  // borde izquierdo activo
+                  '&.Mui-selected::before': {
+                    content: '""',
+                    position: 'absolute',
+                    left: 0, top: '18%', height: '64%', width: 3,
+                    borderRadius: '0 3px 3px 0',
+                    background: 'linear-gradient(180deg, #2563EB, #06B6D4)',
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
+                    minWidth: 36,
                     color: isActive ? 'primary.light' : 'text.secondary',
-                    minWidth: 38,
-                    transition: 'color 0.2s',
+                    transition: 'color 0.18s',
                   }}
                 >
                   {option.icon}
@@ -101,10 +76,10 @@ export const Menu = ({ menuOptions }: Props) => {
                   slotProps={{
                     primary: {
                       sx: {
+                        fontSize: '0.875rem',
                         fontWeight: isActive ? 700 : 500,
-                        fontSize: '0.88rem',
                         color: isActive ? 'primary.light' : 'text.primary',
-                        transition: 'color 0.2s',
+                        transition: 'color 0.18s',
                       },
                     },
                   }}
@@ -115,24 +90,18 @@ export const Menu = ({ menuOptions }: Props) => {
         })}
       </List>
 
-      {/* Fondo decorativo */}
+      {/* Footer del sidebar */}
       <Box
         sx={{
-          mt: 'auto',
-          mx: 2,
-          mb: 3,
-          p: 2,
-          borderRadius: 3,
-          background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.08))',
-          border: '1px solid rgba(124,58,237,0.2)',
+          mx: 1.5, mb: 3, p: 2, borderRadius: 2,
+          background: 'rgba(37,99,235,0.08)',
+          border: '1px solid rgba(37,99,235,0.18)',
           textAlign: 'center',
         }}
       >
-        <ChecklistIcon sx={{ fontSize: 20, color: 'primary.light', mb: 0.5 }} />
-        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.72rem', display: 'block' }}>
-          TaskDone App
-          <br />
-          Diplomado React
+        <ChecklistIcon sx={{ fontSize: 18, color: 'primary.light', mb: 0.4 }} />
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', display: 'block' }}>
+          TaskDone App<br />Diplomado React
         </Typography>
       </Box>
     </Drawer>

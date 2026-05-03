@@ -1,29 +1,13 @@
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  LinearProgress,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-  Paper,
+  Alert, Box, Button, CircularProgress, Dialog, DialogActions,
+  DialogContent, DialogTitle, Divider, LinearProgress,
+  Stack, Tab, Tabs, Typography, Paper,
 } from '@mui/material';
 import {
-  Add as AddIcon,
-  CheckCircle as DoneIcon,
-  HourglassEmpty as PendingIcon,
-  FormatListBulleted as AllIcon,
-  Delete as DeleteIcon,
-  EmojiEvents as TrophyIcon,
-  NoteAdd as NoteAddIcon,
-  Celebration as CelebrationIcon,
+  Add as AddIcon, CheckCircle as DoneIcon,
+  Schedule as PendingIcon, FormatListBulleted as AllIcon,
+  Delete as DeleteIcon, EmojiEvents as TrophyIcon,
+  NoteAdd as NoteAddIcon, Celebration as CelebrationIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { useTasks, useAlert } from '../../hooks';
@@ -31,47 +15,35 @@ import { TaskForm } from '../../components/tasks/TaskForm';
 import { TaskItem } from '../../components/tasks/TaskItem';
 import type { Task } from '../../models/task.model';
 
+// ── Tarjeta de estadística ──────────────────────────────────
 const StatCard = ({
-  label,
-  value,
-  icon,
-  color,
+  label, value, icon, color, bgColor,
 }: {
-  label: string;
-  value: number;
-  icon: React.ReactNode;
-  color: string;
+  label: string; value: number; icon: React.ReactNode; color: string; bgColor: string;
 }) => (
   <Paper
     elevation={0}
     sx={{
-      flex: 1,
-      p: 2,
-      borderRadius: 3,
-      background: `linear-gradient(135deg, ${color}18, ${color}08)`,
-      border: `1px solid ${color}30`,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 1.5,
+      flex: 1, p: 2, borderRadius: 2.5,
+      background: bgColor,
+      border: `1px solid ${color}28`,
+      display: 'flex', alignItems: 'center', gap: 1.5,
+      transition: 'transform 0.18s, box-shadow 0.18s',
+      '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 8px 24px ${color}20` },
     }}
   >
     <Box
       sx={{
-        width: 42,
-        height: 42,
-        borderRadius: 2,
-        bgcolor: `${color}20`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: color,
-        flexShrink: 0,
+        width: 40, height: 40, borderRadius: 2,
+        bgcolor: `${color}18`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        color, flexShrink: 0,
       }}
     >
       {icon}
     </Box>
     <Box>
-      <Typography variant="h5" sx={{ fontWeight: 700, color: color, lineHeight: 1 }}>
+      <Typography variant="h5" sx={{ fontWeight: 800, color, lineHeight: 1.1 }}>
         {value}
       </Typography>
       <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
@@ -81,35 +53,28 @@ const StatCard = ({
   </Paper>
 );
 
+// ── TaskPage ────────────────────────────────────────────────
 export const TaskPage = () => {
   const { tasks, loading, error, createTask, updateTask, toggleStatus, deleteTask } = useTasks();
   const { showAlert } = useAlert();
 
-  const [formOpen, setFormOpen] = useState(false);
+  const [formOpen, setFormOpen]     = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [tab, setTab] = useState<'all' | 'pending' | 'completed'>('all');
+  const [deleteId, setDeleteId]     = useState<number | null>(null);
+  const [tab, setTab]               = useState<'all' | 'pending' | 'completed'>('all');
 
-  const handleOpenCreate = () => {
-    setEditingTask(null);
-    setFormOpen(true);
-  };
-
-  const handleOpenEdit = (task: Task) => {
-    setEditingTask(task);
-    setFormOpen(true);
-  };
+  const handleOpenCreate = () => { setEditingTask(null); setFormOpen(true); };
+  const handleOpenEdit   = (t: Task) => { setEditingTask(t); setFormOpen(true); };
 
   const handleFormSubmit = async (data: { name?: string }) => {
     if (editingTask) {
       const ok = await updateTask(editingTask.id, { name: data.name });
-      if (ok) showAlert('Tarea actualizada correctamente', 'success');
-      return ok;
-    } else {
-      const ok = await createTask({ name: data.name! });
-      if (ok) showAlert('Tarea creada correctamente', 'success');
+      if (ok) showAlert('Tarea actualizada', 'success');
       return ok;
     }
+    const ok = await createTask({ name: data.name! });
+    if (ok) showAlert('Tarea creada', 'success');
+    return ok;
   };
 
   const handleConfirmDelete = async () => {
@@ -121,121 +86,66 @@ export const TaskPage = () => {
 
   const handleToggle = async (id: number, done: boolean) => {
     const ok = await toggleStatus(id, done);
-    if (ok)
-      showAlert(done ? 'Marcada como pendiente' : 'Tarea completada', 'success');
+    if (ok) showAlert(done ? 'Marcada como pendiente' : 'Tarea completada', 'success');
   };
 
+  const pendingCount   = tasks.filter((t) => !t.done).length;
+  const completedCount = tasks.filter((t) => t.done).length;
+  const progressPct    = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+
   const filteredTasks = tasks.filter((t) => {
-    if (tab === 'pending') return !t.done;
-    if (tab === 'completed') return t.done;
+    if (tab === 'pending')   return !t.done;
+    if (tab === 'completed') return  t.done;
     return true;
   });
 
-  const pendingCount = tasks.filter((t) => !t.done).length;
-  const completedCount = tasks.filter((t) => t.done).length;
-  const progressPercent =
-    tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
-
   return (
     <Box>
-      {/* Encabezado */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          mb: 3,
-          flexWrap: 'wrap',
-          gap: 2,
-        }}
-      >
+      {/* ── Encabezado ── */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box>
           <Typography
-            variant="h4"
-            component="h1"
+            variant="h4" component="h1"
             sx={{
-              fontWeight: 800,
-              background: 'linear-gradient(90deg, #a78bfa, #67e8f9)',
+              background: 'linear-gradient(90deg, #3B82F6, #22D3EE)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              letterSpacing: '-0.5px',
             }}
           >
             Mis Tareas
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.3 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.3 }}>
             Gestiona tus tareas de forma eficiente
           </Typography>
         </Box>
-
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleOpenCreate}
-          sx={{ px: 3, py: 1.2, fontSize: '0.9rem' }}
-        >
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ px: 3, py: 1.1 }}>
           Nueva Tarea
         </Button>
       </Box>
 
-      {/* Tarjetas de estadísticas */}
+      {/* ── Stat cards ── */}
       {tasks.length > 0 && (
         <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-          <StatCard label="Total" value={tasks.length} icon={<AllIcon />} color="#7c3aed" />
-          <StatCard label="Pendientes" value={pendingCount} icon={<PendingIcon />} color="#f59e0b" />
-          <StatCard label="Finalizadas" value={completedCount} icon={<DoneIcon />} color="#10b981" />
+          <StatCard label="Total"      value={tasks.length}  icon={<AllIcon />}     color="#3B82F6" bgColor="rgba(37,99,235,0.08)" />
+          <StatCard label="Pendientes" value={pendingCount}  icon={<PendingIcon />} color="#64748B" bgColor="rgba(100,116,139,0.08)" />
+          <StatCard label="Finalizadas" value={completedCount} icon={<DoneIcon />}  color="#10B981" bgColor="rgba(16,185,129,0.08)" />
         </Box>
       )}
 
-      {/* Barra de progreso */}
+      {/* ── Barra de progreso ── */}
       {tasks.length > 0 && (
-        <Paper
-          elevation={0}
-          sx={{
-            p: 2.5,
-            mb: 3,
-            borderRadius: 3,
-            background: 'linear-gradient(135deg, #1e1e3a, #16213e)',
-            border: '1px solid rgba(255,255,255,0.06)',
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
-              Progreso general
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 700,
-                color: progressPercent === 100 ? 'success.main' : 'primary.light',
-              }}
-            >
-              {progressPercent}%
+        <Paper elevation={0} sx={{ p: 2.5, mb: 3, borderRadius: 2.5 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.2 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>Progreso general</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 700, color: progressPct === 100 ? 'success.main' : 'primary.light' }}>
+              {progressPct}%
             </Typography>
           </Box>
-          <LinearProgress
-            variant="determinate"
-            value={progressPercent}
-            sx={{
-              height: 8,
-              borderRadius: 4,
-              bgcolor: 'rgba(255,255,255,0.06)',
-              '& .MuiLinearProgress-bar': {
-                borderRadius: 4,
-                background:
-                  progressPercent === 100
-                    ? 'linear-gradient(90deg, #10b981, #6ee7b7)'
-                    : 'linear-gradient(90deg, #7c3aed, #06b6d4)',
-              },
-            }}
-          />
-          {progressPercent === 100 && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.8 }}>
-              <CelebrationIcon sx={{ fontSize: 16, color: 'success.main' }} />
-              <Typography
-                variant="caption"
-                sx={{ color: 'success.main', fontWeight: 600 }}
-              >
+          <LinearProgress variant="determinate" value={progressPct} />
+          {progressPct === 100 && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 1 }}>
+              <CelebrationIcon sx={{ fontSize: 15, color: 'success.main' }} />
+              <Typography variant="caption" sx={{ color: 'success.main', fontWeight: 600 }}>
                 ¡Todas las tareas completadas!
               </Typography>
             </Box>
@@ -243,112 +153,64 @@ export const TaskPage = () => {
         </Paper>
       )}
 
-      {/* Error global */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
-          {error}
-        </Alert>
-      )}
+      {/* ── Error ── */}
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-      {/* Pestañas */}
-      <Tabs
-        value={tab}
-        onChange={(_, v) => setTab(v)}
-        sx={{
-          mb: 2,
-          '& .MuiTabs-indicator': {
-            background: 'linear-gradient(90deg, #7c3aed, #06b6d4)',
-            height: 3,
-            borderRadius: 2,
-          },
-        }}
-      >
-        <Tab label={`Todas (${tasks.length})`} value="all" />
-        <Tab label={`Pendientes (${pendingCount})`} value="pending" />
+      {/* ── Tabs ── */}
+      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
+        <Tab label={`Todas (${tasks.length})`}       value="all" />
+        <Tab label={`Pendientes (${pendingCount})`}  value="pending" />
         <Tab label={`Finalizadas (${completedCount})`} value="completed" />
       </Tabs>
 
-      <Divider sx={{ mb: 2.5, borderColor: 'rgba(255,255,255,0.06)' }} />
+      <Divider sx={{ mb: 2.5 }} />
 
-      {/* Lista */}
+      {/* ── Lista ── */}
       {loading ? (
-        <Box
-          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8, gap: 2 }}
-        >
-          <CircularProgress sx={{ color: 'primary.light' }} />
-          <Typography variant="body2" color="text.secondary">
-            Cargando tareas...
-          </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8, gap: 2 }}>
+          <CircularProgress />
+          <Typography variant="body2" color="text.secondary">Cargando tareas...</Typography>
         </Box>
       ) : filteredTasks.length === 0 ? (
         <Box
           sx={{
-            textAlign: 'center',
-            py: 10,
-            px: 3,
-            borderRadius: 4,
-            background: 'linear-gradient(135deg, rgba(124,58,237,0.05), rgba(6,182,212,0.03))',
-            border: '1px dashed rgba(124,58,237,0.2)',
+            textAlign: 'center', py: 9, px: 3, borderRadius: 3,
+            background: 'rgba(37,99,235,0.04)',
+            border: '1px dashed rgba(37,99,235,0.2)',
           }}
         >
           <Box
             sx={{
-              width: 72,
-              height: 72,
-              borderRadius: '50%',
-              bgcolor: 'rgba(124,58,237,0.12)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mx: 'auto',
-              mb: 2,
+              width: 68, height: 68, borderRadius: '50%',
+              bgcolor: 'rgba(37,99,235,0.1)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              mx: 'auto', mb: 2,
             }}
           >
-            {tab === 'completed' ? (
-              <TrophyIcon sx={{ fontSize: 36, color: '#f59e0b' }} />
-            ) : (
-              <NoteAddIcon sx={{ fontSize: 36, color: '#7c3aed' }} />
-            )}
+            {tab === 'completed'
+              ? <TrophyIcon sx={{ fontSize: 32, color: '#10B981' }} />
+              : <NoteAddIcon sx={{ fontSize: 32, color: 'primary.light' }} />}
           </Box>
           <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
-            {tab === 'all'
-              ? 'Sin tareas todavía'
-              : tab === 'pending'
-                ? 'Sin tareas pendientes'
-                : 'Sin tareas finalizadas'}
+            {tab === 'all' ? 'Sin tareas todavía'
+              : tab === 'pending' ? 'Sin tareas pendientes'
+              : 'Sin tareas finalizadas'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {tab === 'all' && 'Crea tu primera tarea con el botón "Nueva Tarea"'}
-            {tab === 'pending' && '¡Todo al día! No tienes tareas pendientes.'}
+            {tab === 'all'       && 'Crea tu primera tarea con el botón "Nueva Tarea"'}
+            {tab === 'pending'   && 'No tienes tareas pendientes. ¡Al día!'}
             {tab === 'completed' && 'Completa algunas tareas para verlas aquí.'}
           </Typography>
           {tab === 'all' && (
-            <Button
-              variant="outlined"
-              startIcon={<AddIcon />}
-              onClick={handleOpenCreate}
-              sx={{
-                mt: 3,
-                borderColor: 'rgba(124,58,237,0.4)',
-                color: 'primary.light',
-                '&:hover': {
-                  borderColor: 'primary.main',
-                  bgcolor: 'rgba(124,58,237,0.08)',
-                },
-              }}
-            >
+            <Button variant="outlined" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ mt: 3 }}>
               Crear primera tarea
             </Button>
           )}
         </Box>
       ) : (
         <Stack spacing={1.5}>
-          {filteredTasks.map((task, index) => (
-            <Box
-              key={task.id}
-              className="task-card-enter"
-              sx={{ animationDelay: `${index * 0.05}s` }}
-            >
+          {filteredTasks.map((task, i) => (
+            <Box key={task.id} className="task-card-enter" sx={{ animationDelay: `${i * 0.04}s` }}>
               <TaskItem
                 task={task}
                 onEdit={handleOpenEdit}
@@ -360,18 +222,13 @@ export const TaskPage = () => {
         </Stack>
       )}
 
-      {/* Diálogo Crear / Editar */}
-      <TaskForm
-        open={formOpen}
-        onClose={() => setFormOpen(false)}
-        onSubmit={handleFormSubmit}
-        task={editingTask}
-      />
+      {/* ── Formulario crear/editar ── */}
+      <TaskForm open={formOpen} onClose={() => setFormOpen(false)} onSubmit={handleFormSubmit} task={editingTask} />
 
-      {/* Diálogo de eliminación */}
+      {/* ── Confirmación eliminar ── */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
-        <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <DeleteIcon sx={{ color: 'error.main' }} />
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <DeleteIcon sx={{ color: 'error.main', fontSize: 20 }} />
           Eliminar tarea
         </DialogTitle>
         <DialogContent>
@@ -380,17 +237,14 @@ export const TaskPage = () => {
           </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-          <Button onClick={() => setDeleteId(null)} color="inherit">
-            Cancelar
-          </Button>
+          <Button onClick={() => setDeleteId(null)} color="inherit">Cancelar</Button>
           <Button
             onClick={handleConfirmDelete}
             variant="contained"
-            color="error"
             startIcon={<DeleteIcon />}
             sx={{
-              background: 'linear-gradient(135deg, #ef4444, #b91c1c) !important',
-              boxShadow: '0 4px 12px rgba(239,68,68,0.3) !important',
+              background: 'linear-gradient(135deg,#EF4444,#B91C1C) !important',
+              boxShadow: '0 4px 14px rgba(239,68,68,0.35) !important',
             }}
           >
             Eliminar
