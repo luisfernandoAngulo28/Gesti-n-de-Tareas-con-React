@@ -1,73 +1,84 @@
-# React + TypeScript + Vite
+# 📋 Gestión de Tareas — Proyecto Final React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web de gestión de tareas (To-Do List) desarrollada como proyecto final del Diplomado de React. Permite crear, editar, eliminar y cambiar el estado de tareas conectadas a un backend REST.
 
-Currently, two official plugins are available:
+## 🌐 Demo en vivo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🔗 [Ver aplicación en GitHub Pages](https://luisfernandoangulo28.github.io/Gesti-n-de-Tareas-con-React/)
 
-## React Compiler
+## 🚀 Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Acción | Método API | Descripción |
+|---|---|---|
+| **Visualizar tareas** | `GET /api/tasks` | Lista dinámica con filtros por estado |
+| **Crear tarea** | `POST /api/tasks` | Formulario modal con validación |
+| **Editar tarea** | `PUT /api/tasks/:id` | Modificar el nombre de una tarea |
+| **Eliminar tarea** | `DELETE /api/tasks/:id` | Borrar con confirmación |
+| **Cambiar estado** | `PATCH /api/tasks/:id` | Alternar entre Pendiente ↔ Finalizada |
 
-## Expanding the ESLint configuration
+### Extras implementados
+- 🔐 Autenticación con JWT (login y registro)
+- 🏷️ Filtros por pestañas: Todas / Pendientes / Finalizadas
+- 🎨 Estilos visuales distintos por estado (verde/naranja, tachado)
+- 💬 Alertas de feedback en cada operación
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tecnologías
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **React 19** + **TypeScript**
+- **Vite** (bundler)
+- **Material UI v9** (componentes de UI)
+- **Axios** (cliente HTTP)
+- **React Router v7** (navegación)
+- **Zod** (validación de formularios)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🔗 Backend
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **URL Base:** `https://taskdone-node.onrender.com`
+- **API Docs:** [Swagger UI](https://taskdone-node.onrender.com/api-docs)
+
+## ⚙️ Instalación local
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/luisfernandoAngulo28/Gesti-n-de-Tareas-con-React.git
+cd Gesti-n-de-Tareas-con-React
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.sample .env
+# Editar .env: VITE_API_URL=https://taskdone-node.onrender.com/api
+
+# 4. Iniciar en desarrollo
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📦 Deploy en GitHub Pages
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+npm run deploy
 ```
+
+## 📂 Estructura del proyecto
+
+```
+src/
+├── components/
+│   ├── layout/        # Header, Menu, Footer, Layout
+│   └── tasks/         # TaskForm, TaskItem
+├── context/           # AuthContext, AlertContext
+├── hooks/             # useAuth, useTasks, useAxios, useAlert
+├── models/            # Task, Login, User interfaces/schemas
+├── pages/
+│   ├── private/       # TaskPage, PerfilPage
+│   └── public/        # LoginPage, UserPage, NotFoundPage
+└── routes/            # AppRouter
+```
+
+---
+
+*Proyecto desarrollado para el Diplomado React — USIP*
+
+**Repositorio:** https://github.com/luisfernandoAngulo28/Gesti-n-de-Tareas-con-React
