@@ -8,6 +8,7 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
+import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import type { Task, CreateTaskDto, UpdateTaskDto } from '../../models/task.model';
 
@@ -41,10 +42,25 @@ export const TaskForm = ({ open, onClose, onSubmit, task }: Props) => {
     if (ok) onClose();
   };
 
+  const isEdit = !!task;
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle sx={{ fontWeight: 700 }}>
-        {task ? '✏️ Editar Tarea' : '➕ Nueva Tarea'}
+      <DialogTitle
+        sx={{
+          fontWeight: 700,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          pb: 1,
+        }}
+      >
+        {isEdit ? (
+          <EditIcon sx={{ color: 'primary.light', fontSize: 22 }} />
+        ) : (
+          <AddIcon sx={{ color: 'primary.light', fontSize: 22 }} />
+        )}
+        {isEdit ? 'Editar Tarea' : 'Nueva Tarea'}
       </DialogTitle>
 
       <DialogContent>
@@ -74,9 +90,17 @@ export const TaskForm = ({ open, onClose, onSubmit, task }: Props) => {
           onClick={handleSubmit}
           variant="contained"
           disabled={loading}
-          startIcon={loading ? <CircularProgress size={18} color="inherit" /> : null}
+          startIcon={
+            loading ? (
+              <CircularProgress size={18} color="inherit" />
+            ) : isEdit ? (
+              <EditIcon />
+            ) : (
+              <AddIcon />
+            )
+          }
         >
-          {loading ? 'Guardando...' : task ? 'Guardar cambios' : 'Crear tarea'}
+          {loading ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Crear tarea'}
         </Button>
       </DialogActions>
     </Dialog>

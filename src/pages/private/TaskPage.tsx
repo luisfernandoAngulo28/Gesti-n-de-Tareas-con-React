@@ -20,6 +20,10 @@ import {
   CheckCircle as DoneIcon,
   HourglassEmpty as PendingIcon,
   FormatListBulleted as AllIcon,
+  Delete as DeleteIcon,
+  EmojiEvents as TrophyIcon,
+  NoteAdd as NoteAddIcon,
+  Celebration as CelebrationIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { useTasks, useAlert } from '../../hooks';
@@ -27,7 +31,6 @@ import { TaskForm } from '../../components/tasks/TaskForm';
 import { TaskItem } from '../../components/tasks/TaskItem';
 import type { Task } from '../../models/task.model';
 
-// Tarjeta de estadística
 const StatCard = ({
   label,
   value,
@@ -100,11 +103,11 @@ export const TaskPage = () => {
   const handleFormSubmit = async (data: { name?: string }) => {
     if (editingTask) {
       const ok = await updateTask(editingTask.id, { name: data.name });
-      if (ok) showAlert('Tarea actualizada ✅', 'success');
+      if (ok) showAlert('Tarea actualizada correctamente', 'success');
       return ok;
     } else {
       const ok = await createTask({ name: data.name! });
-      if (ok) showAlert('Tarea creada ✅', 'success');
+      if (ok) showAlert('Tarea creada correctamente', 'success');
       return ok;
     }
   };
@@ -113,12 +116,13 @@ export const TaskPage = () => {
     if (deleteId === null) return;
     const ok = await deleteTask(deleteId);
     setDeleteId(null);
-    if (ok) showAlert('Tarea eliminada 🗑️', 'info');
+    if (ok) showAlert('Tarea eliminada', 'info');
   };
 
   const handleToggle = async (id: number, done: boolean) => {
     const ok = await toggleStatus(id, done);
-    if (ok) showAlert(done ? 'Marcada como pendiente' : '¡Tarea completada! ✓', 'success');
+    if (ok)
+      showAlert(done ? 'Marcada como pendiente' : 'Tarea completada', 'success');
   };
 
   const filteredTasks = tasks.filter((t) => {
@@ -129,7 +133,8 @@ export const TaskPage = () => {
 
   const pendingCount = tasks.filter((t) => !t.done).length;
   const completedCount = tasks.filter((t) => t.done).length;
-  const progressPercent = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+  const progressPercent =
+    tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
 
   return (
     <Box>
@@ -225,12 +230,15 @@ export const TaskPage = () => {
             }}
           />
           {progressPercent === 100 && (
-            <Typography
-              variant="caption"
-              sx={{ color: 'success.main', fontWeight: 600, mt: 0.8, display: 'block' }}
-            >
-              🎉 ¡Todas las tareas completadas!
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.8 }}>
+              <CelebrationIcon sx={{ fontSize: 16, color: 'success.main' }} />
+              <Typography
+                variant="caption"
+                sx={{ color: 'success.main', fontWeight: 600 }}
+              >
+                ¡Todas las tareas completadas!
+              </Typography>
+            </Box>
           )}
         </Paper>
       )}
@@ -264,7 +272,9 @@ export const TaskPage = () => {
 
       {/* Lista */}
       {loading ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8, gap: 2 }}>
+        <Box
+          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8, gap: 2 }}
+        >
           <CircularProgress sx={{ color: 'primary.light' }} />
           <Typography variant="body2" color="text.secondary">
             Cargando tareas...
@@ -281,18 +291,36 @@ export const TaskPage = () => {
             border: '1px dashed rgba(124,58,237,0.2)',
           }}
         >
-          <Typography sx={{ fontSize: 56, mb: 1.5 }}>
-            {tab === 'completed' ? '🏆' : '📝'}
-          </Typography>
+          <Box
+            sx={{
+              width: 72,
+              height: 72,
+              borderRadius: '50%',
+              bgcolor: 'rgba(124,58,237,0.12)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mx: 'auto',
+              mb: 2,
+            }}
+          >
+            {tab === 'completed' ? (
+              <TrophyIcon sx={{ fontSize: 36, color: '#f59e0b' }} />
+            ) : (
+              <NoteAddIcon sx={{ fontSize: 36, color: '#7c3aed' }} />
+            )}
+          </Box>
           <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
             {tab === 'all'
               ? 'Sin tareas todavía'
               : tab === 'pending'
-                ? '¡Todo al día! Sin pendientes'
-                : 'Aún no hay tareas finalizadas'}
+                ? 'Sin tareas pendientes'
+                : 'Sin tareas finalizadas'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {tab === 'all' && 'Crea tu primera tarea con el botón "Nueva Tarea"'}
+            {tab === 'pending' && '¡Todo al día! No tienes tareas pendientes.'}
+            {tab === 'completed' && 'Completa algunas tareas para verlas aquí.'}
           </Typography>
           {tab === 'all' && (
             <Button
@@ -303,7 +331,10 @@ export const TaskPage = () => {
                 mt: 3,
                 borderColor: 'rgba(124,58,237,0.4)',
                 color: 'primary.light',
-                '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(124,58,237,0.08)' },
+                '&:hover': {
+                  borderColor: 'primary.main',
+                  bgcolor: 'rgba(124,58,237,0.08)',
+                },
               }}
             >
               Crear primera tarea
@@ -339,7 +370,10 @@ export const TaskPage = () => {
 
       {/* Diálogo de eliminación */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
-        <DialogTitle sx={{ fontWeight: 700 }}>🗑️ Eliminar tarea</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <DeleteIcon sx={{ color: 'error.main' }} />
+          Eliminar tarea
+        </DialogTitle>
         <DialogContent>
           <Typography color="text.secondary">
             ¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.
@@ -353,6 +387,7 @@ export const TaskPage = () => {
             onClick={handleConfirmDelete}
             variant="contained"
             color="error"
+            startIcon={<DeleteIcon />}
             sx={{
               background: 'linear-gradient(135deg, #ef4444, #b91c1c) !important',
               boxShadow: '0 4px 12px rgba(239,68,68,0.3) !important',

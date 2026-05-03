@@ -9,6 +9,7 @@ import {
   Box,
   Typography,
 } from '@mui/material';
+import { Checklist as ChecklistIcon } from '@mui/icons-material';
 import type { MenuType } from './types';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -127,8 +128,9 @@ export const Menu = ({ menuOptions }: Props) => {
           textAlign: 'center',
         }}
       >
-        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.72rem' }}>
-          📋 TaskDone App
+        <ChecklistIcon sx={{ fontSize: 20, color: 'primary.light', mb: 0.5 }} />
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.72rem', display: 'block' }}>
+          TaskDone App
           <br />
           Diplomado React
         </Typography>

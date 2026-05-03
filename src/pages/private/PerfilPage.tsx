@@ -36,7 +36,7 @@ export const PerfilPage = () => {
             {user?.username}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Bienvenido a tu perfil 👋
+            Bienvenido a tu perfil
           </Typography>
         </CardContent>
       </Card>
